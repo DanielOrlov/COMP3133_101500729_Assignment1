@@ -9,6 +9,7 @@ const { graphqlHTTP } = require("express-graphql");
 
 //Models
 const UserModel = require("./model/User");
+const EmployeeModel = require("./model/Employee");
 
 const app = express();
 const PORT = 4000;
@@ -30,16 +31,55 @@ const gqlSchema = buildSchema(`
         updated_at: String
     }
 
+    type Employee{
+        _id: ID!
+        first_name: String!
+        last_name: String!
+        email: String!
+        gender: String!
+        designation: String!
+        salary: Float!
+        date_of_joining: String!
+        department: String!
+        employee_photo: String
+        created_at: String
+        updated_at: String
+    }
+
 
     type Query{
-        users: [User]
+        users: [User]!
         user(username: String!): User
+
+        employees: [Employee]!
+        employee(id: ID!): Employee
     }
 
     type Mutation{
         createUser(username: String!, email: String!, password: String!): User
         updateUser(id: ID!, username: String!, email: String!, password: String!): User
         deleteUser(id: ID!): User
+
+        createEmployee(
+          first_name: String!, 
+          last_name: String!, 
+          email: String!, 
+          gender: String!, 
+          designation: String!, 
+          salary: Float!, 
+          department: String!): Employee
+
+        updateEmployee(
+          id: ID!, 
+          first_name: String!, 
+          last_name: String!, 
+          email: String!, 
+          gender: String!, 
+          designation: String!, 
+          salary: Float!, 
+          department: String!): Employee
+
+        deleteEmployee(id: ID!): Employee
     }
         
 
@@ -107,6 +147,100 @@ const rootResolver = {
       return null;
     }
   },
+  employees: async () => {
+    try {
+      const employees = await EmployeeModel.find();
+      return employees.map((emp) => ({
+        ...emp._doc,
+        date_of_joining: formatDate(emp.date_of_joining),
+      }));
+    } catch (error) {
+      console.log(`Error while fetching employees: ${error}`);
+      return [];
+    }
+  },
+  employee: async (args) => {
+    try {
+      const employee = await EmployeeModel.findOne({
+        _id: args.id,
+      });
+
+      if (!employee) return null;
+
+      return {
+        ...employee._doc,
+        date_of_joining: formatDate(employee.date_of_joining),
+      };
+    } catch (error) {
+      console.log(`Error while fetching employee: ${error}`);
+      return null;
+    }
+  },
+  createEmployee: async (args) => {
+    try {
+      const newEmployee = new EmployeeModel({
+        first_name: args.first_name,
+        last_name: args.last_name,
+        email: args.email,
+        gender: args.gender,
+        designation: args.designation,
+        salary: args.salary,
+        department: args.department,
+      });
+      const savedEmployee = await newEmployee.save();
+      return {
+        ...savedEmployee._doc,
+        date_of_joining: formatDate(savedEmployee.date_of_joining),
+      };
+    } catch (error) {
+      console.log(`Error while creating employee: ${error.message}`);
+      throw new Error(error.message);
+    }
+  },
+  updateEmployee: async (args) => {
+    try {
+      const updatedEmployee = await EmployeeModel.findOneAndUpdate(
+        { _id: args.id },
+        {
+          $set: {
+            first_name: args.first_name,
+            last_name: args.last_name,
+            email: args.email,
+            gender: args.gender,
+            designation: args.designation,
+            salary: args.salary,
+            department: args.department,
+          },
+        },
+        { new: true },
+      );
+
+      if (!employee) return null;
+
+      return {
+        ...updatedEmployee._doc,
+        date_of_joining: formatDate(updatedEmployee.date_of_joining),
+      };
+    } catch (error) {
+      console.log(`Error while updating employee: ${error.message}`);
+      throw new Error(error.message);
+    }
+  },
+  deleteEmployee: async (args) => {
+    try {
+      const deletedEmployee = await EmployeeModel.findByIdAndDelete(args.id);
+
+      if (!employee) return null;
+
+      return {
+        ...deletedEmployee._doc,
+        date_of_joining: formatDate(deletedEmployee.date_of_joining),
+      };
+    } catch (error) {
+      console.log(`Error while deleting employee : ${error.message}`);
+      throw new Error(error.message);
+    }
+  },
 };
 
 //Create express graphql
@@ -142,6 +276,14 @@ const connectDB = async () => {
   } catch (error) {
     console.log(`Unable to connect to DB : ${error.message}`);
   }
+};
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 app.listen(PORT, () => {
