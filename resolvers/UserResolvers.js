@@ -1,4 +1,6 @@
 import userModel from "../models/User.js";
+import bcrypt from "bcryptjs";
+const SALT_ROUNDS = 10;
 
 const userResolvers = {
   Query: {
@@ -33,10 +35,12 @@ const userResolvers = {
   Mutation: {
     createUser: async (_, args) => {
       try {
+        const hashed = await bcrypt.hash(args.password, SALT_ROUNDS);
+
         const newUser = new userModel({
           username: args.username,
           email: args.email,
-          password: args.password,
+          password: hashed,
         });
 
         const savedUser = await newUser.save();
@@ -50,14 +54,22 @@ const userResolvers = {
 
     updateUser: async (_, args) => {
       try {
+        const updateFields = {};
+        if (args.username !== undefined) updateFields.username = args.username;
+        if (args.email !== undefined) updateFields.email = args.email;
+
+        if (
+          args.password !== undefined &&
+          args.password !== null &&
+          args.password !== ""
+        ) {
+          updateFields.password = await bcrypt.hash(args.password, SALT_ROUNDS);
+        }
+
         const updatedUser = await userModel.findOneAndUpdate(
           { _id: args.id },
           {
-            $set: {
-              username: args.username,
-              email: args.email,
-              password: args.password,
-            },
+            $set: updateFields,
           },
           { new: true },
         );
