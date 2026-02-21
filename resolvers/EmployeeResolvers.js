@@ -30,7 +30,33 @@ const employeeResolvers = {
         };
       } catch (error) {
         console.log(`Error while fetching employee: ${error}`);
-        return null;
+        throw new Error(error.message);
+      }
+    },
+
+    findEmployeesByDesignationOrDepartment: async (_, args) => {
+      try {
+        const q = (args.search ?? "").trim();
+        if (!q) return [];
+
+        const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const re = new RegExp(escaped, "i");
+
+        const docs = await employeeModel
+          .find({
+            $or: [{ department: re }, { designation: re }],
+          })
+          .lean();
+
+        return docs.map((d) => ({
+          ...d,
+          date_of_joining: d.date_of_joining
+            ? formatDate(d.date_of_joining)
+            : null,
+        }));
+      } catch (error) {
+        console.log(`Error while fetching employees: ${error}`);
+        throw new Error(error.message);
       }
     },
   },

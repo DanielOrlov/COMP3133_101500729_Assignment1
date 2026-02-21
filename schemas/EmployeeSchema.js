@@ -19,6 +19,7 @@ const employeeTypeDefs = gql`
   extend type Query {
     employees: [Employee]!
     employee(id: ID!): Employee
+    findEmployeesByDesignationOrDepartment(search: String): [Employee]!
   }
 
   extend type Mutation {
