@@ -34,13 +34,13 @@ const employeeTypeDefs = gql`
 
     updateEmployee(
       id: ID!
-      first_name: String!
-      last_name: String!
-      email: String!
-      gender: String!
-      designation: String!
-      salary: Float!
-      department: String!
+      first_name: String
+      last_name: String
+      email: String
+      gender: String
+      designation: String
+      salary: Float
+      department: String
     ): Employee
 
     deleteEmployee(id: ID!): Employee
