@@ -25,7 +25,7 @@ const userResolvers = {
         return safe;
       } catch (error) {
         console.log(`Error while fetching user: ${error}`);
-        return null;
+        throw new Error(error.message);
       }
     },
   },
@@ -44,7 +44,7 @@ const userResolvers = {
         return safe;
       } catch (error) {
         console.log(`Error while creating user: ${error.message}`);
-        return null;
+        throw new Error(error.message);
       }
     },
 
@@ -68,7 +68,7 @@ const userResolvers = {
         return safe;
       } catch (error) {
         console.log(`Error while updating user: ${error.message}`);
-        return null;
+        throw new Error(error.message);
       }
     },
 
@@ -81,9 +81,17 @@ const userResolvers = {
         return safe;
       } catch (error) {
         console.log(`Error while deleting user : ${error.message}`);
-        return null;
+        throw new Error(error.message);
       }
     },
+  },
+
+  User: {
+    created_at: (parent) =>
+      parent.created_at ? new Date(parent.created_at).toISOString() : null,
+
+    updated_at: (parent) =>
+      parent.updated_at ? new Date(parent.updated_at).toISOString() : null,
   },
 };
 

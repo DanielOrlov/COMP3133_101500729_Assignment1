@@ -1,22 +1,28 @@
 import mongoose from "mongoose";
+import validator from "validator";
+
 const employeeSchema = new mongoose.Schema(
   {
     first_name: {
       type: String,
-      required: true,
+      required: [true, "First name is required"],
       trim: true,
     },
     last_name: {
       type: String,
-      required: true,
+      required: [true, "Last name is required"],
       trim: true,
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, "Email is required"],
+      unique: [true, "Email is already in use"],
       trim: true,
       lowercase: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid email format",
+      },
     },
     gender: {
       type: String,
@@ -25,12 +31,12 @@ const employeeSchema = new mongoose.Schema(
     },
     designation: {
       type: String,
-      required: true,
+      required: [true, "Designation is required"],
       trim: true,
     },
     salary: {
       type: Number,
-      required: true,
+      required: [true, "Salary is required"],
       min: [1000, "Salary cannot be lower than 1000"],
     },
     date_of_joining: {
@@ -40,7 +46,7 @@ const employeeSchema = new mongoose.Schema(
     },
     department: {
       type: String,
-      required: true,
+      required: [true, "Department is required"],
     },
     employee_photo: {
       type: String,
