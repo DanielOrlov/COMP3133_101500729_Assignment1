@@ -1,5 +1,6 @@
 import userModel from "../models/User.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 const SALT_ROUNDS = 10;
 
 const userResolvers = {
@@ -93,6 +94,27 @@ const userResolvers = {
         return safe;
       } catch (error) {
         console.log(`Error while deleting user : ${error.message}`);
+        throw new Error(error.message);
+      }
+    },
+
+    login: async (_, args) => {
+      try {
+        const user = await userModel.findOne({ username: args.username });
+        if (!user) throw new Error("Invalid credentials");
+
+        const isMatch = await bcrypt.compare(args.password, user.password);
+        if (!isMatch) throw new Error("Invalid credentials");
+
+        const payload = { id: user._id, username: user.username };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+          expiresIn: process.env.JWT_EXPIRES,
+        });
+
+        const { password, ...safe } = user._doc ?? user;
+
+        return { token, user: safe };
+      } catch (error) {
         throw new Error(error.message);
       }
     },

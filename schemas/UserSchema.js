@@ -25,6 +25,13 @@ const userTypeDefs = gql`
     ): User
 
     deleteUser(id: ID!): User
+
+    login(username: String!, password: String!): AuthPayload
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
   }
 `;
 
