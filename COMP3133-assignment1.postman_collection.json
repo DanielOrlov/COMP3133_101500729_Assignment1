@@ -1,0 +1,307 @@
+{
+  "info": {
+    "_postman_id": "eabb4a75-2687-424d-9d45-97484763f6e5",
+    "name": "COMP3133-assignment1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48726166",
+    "_collection_link": "https://go.postman.co/collection/48726166-eabb4a75-2687-424d-9d45-97484763f6e5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "assignment1",
+      "item": [
+        {
+          "name": "get-all-users",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Query {\r\n  users {\r\n    _id\r\n    username\r\n    email\r\n    created_at\r\n    updated_at\r\n  }\r\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation Mutation($username: String!, $email: String!, $password: String!) {\r\n  createUser(username: $username, email: $email, password: $password) {\r\n    username\r\n    email\r\n    created_at\r\n    updated_at\r\n  }\r\n}",
+                "variables": "{\r\n  \"username\": \"admin\",\r\n  \"email\": \"admin@email.com\",\r\n  \"password\": \"admin\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-all-employees",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Employees {\r\n  employees {\r\n    _id\r\n    first_name\r\n    last_name\r\n    email\r\n    department\r\n    designation\r\n    gender\r\n    salary\r\n    date_of_joining\r\n    created_at\r\n    updated_at\r\n    employee_photo\r\n  }\r\n}",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-employee",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation Mutation($firstName: String!, $lastName: String!, $email: String!, $gender: String!, $designation: String!, $salary: Float!, $department: String!) {\r\n  createEmployee(\r\n    first_name: $firstName, \r\n    last_name: $lastName, \r\n    email: $email, \r\n    gender: $gender, \r\n    designation: $designation, \r\n    salary: $salary, \r\n    department: $department) {\r\n    _id\r\n    first_name\r\n    last_name\r\n    email\r\n    department\r\n    designation\r\n    salary\r\n    gender\r\n    date_of_joining\r\n    employee_photo\r\n    created_at\r\n    updated_at\r\n  }\r\n}",
+                "variables": "{  \"firstName\": \"Monica\",\r\n  \"lastName\": \"Geller\",  \r\n  \"email\": \"monica.geller@email.com\",\r\n  \"gender\": \"Female\",  \r\n  \"designation\": \"Chef\",\r\n  \"salary\": 20000,\r\n  \"department\": \"Kitchen\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-employee-by-id",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Query($employeeId: ID!) {\r\n  employee(id: $employeeId) {\r\n    _id\r\n    first_name\r\n    last_name\r\n    department\r\n    salary\r\n  }\r\n}",
+                "variables": "{\r\n    \"employeeId\": \"699a0fb49dfe41e0f7d44946\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-employee-by-id",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation Mutation(\r\n    $id: ID!,\r\n    $designation: String,\r\n    $salary: Float, \r\n    $department: String) \r\n    {\r\n        updateEmployee(\r\n            id: $id,\r\n            department: $department,\r\n            salary: $salary,\r\n            designation: $designation\r\n            ) \r\n            \r\n    {\r\n    _id\r\n    first_name\r\n    last_name\r\n    department\r\n    designation\r\n    salary\r\n  }\r\n}",
+                "variables": "{\r\n     \"id\": \"699a0fb49dfe41e0f7d44946\",\r\n    \"department\": \"Accounting\",\r\n    \"salary\": 50000,\r\n    \"designation\": \"CAO\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-employee-by-id",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation DeleteEmployee($id: ID!) {\r\n  deleteEmployee(id: $id) {\r\n    _id\r\n  }\r\n}",
+                "variables": "{\r\n    \"id\": \"699a0fb49dfe41e0f7d44946\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find-emp-by-designation-or-department",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Query($search: String) {\r\n  findEmployeesByDesignationOrDepartment(search: $search) {\r\n    _id\r\n    first_name\r\n    last_name\r\n    email\r\n    department\r\n    designation\r\n  }\r\n}",
+                "variables": "{\r\n  \"search\": \"IT\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "user-login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation Mutation($username: String!, $password: String!) {\r\n  login(username: $username, password: $password) {\r\n    user {\r\n      username\r\n    }\r\n    token\r\n  }\r\n}",
+                "variables": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upload-pic-to-cloudinary",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "dc52953f-a31f-4a38-9356-20855537401e",
+                  "src": "/C:/Users/Daniel/Downloads/photo_2025-11-12_14-04-14.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/upload",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "upload"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-user-avatar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation UpdateEmployeePhoto($id: ID!, $employee_photo: String) {\r\n  updateEmployee(id: $id, employee_photo: $employee_photo) {\r\n    _id\r\n    employee_photo\r\n  }\r\n}",
+                "variables": "{\r\n  \"id\": \"699a5964ef377011ca746105\",\r\n  \"employee_photo\": \"https://res.cloudinary.com/dgdkqquil/image/upload/v1771701127/296fe121-5dfa-43f4-98b5-db50019738a7_p2xynb.jpg\"\r\n}"
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/graphql",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
