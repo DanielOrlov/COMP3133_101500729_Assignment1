@@ -1,4 +1,5 @@
 import employeeModel from "../models/Employee.js";
+import mongoose from "mongoose";
 
 const employeeResolvers = {
   Query: {
@@ -72,6 +73,7 @@ const employeeResolvers = {
           designation: args.designation,
           salary: args.salary,
           department: args.department,
+          employee_photo: args.employee_photo,
           // date_of_joining will be whatever your Mongoose default is (or undefined)
         });
 
@@ -91,28 +93,43 @@ const employeeResolvers = {
 
     updateEmployee: async (_, args) => {
       try {
+        const { id, ...rest } = args;
+
+        // validate id early
+        if (!mongoose.Types.ObjectId.isValid(id)) return null;
+
+        const updateFields = {};
+        Object.keys(rest).forEach((key) => {
+          const val = rest[key];
+          if (val !== undefined) updateFields[key] = val;
+        });
+
+        if (Object.keys(updateFields).length === 0) {
+          return await employeeModel.findOne({ _id: id }).then((emp) => {
+            if (!emp) return null;
+            const doc = emp._doc ?? emp;
+            return {
+              ...doc,
+              date_of_joining: doc.date_of_joining
+                ? formatDate(doc.date_of_joining)
+                : null,
+            };
+          });
+        }
+
         const updatedEmployee = await employeeModel.findOneAndUpdate(
-          { _id: args.id },
-          {
-            $set: {
-              first_name: args.first_name,
-              last_name: args.last_name,
-              email: args.email,
-              gender: args.gender,
-              designation: args.designation,
-              salary: args.salary,
-              department: args.department,
-            },
-          },
+          { _id: id },
+          { $set: updateFields },
           { new: true },
         );
 
         if (!updatedEmployee) return null;
 
+        const doc = updatedEmployee._doc ?? updatedEmployee;
         return {
-          ...updatedEmployee._doc,
-          date_of_joining: updatedEmployee.date_of_joining
-            ? formatDate(updatedEmployee.date_of_joining)
+          ...doc,
+          date_of_joining: doc.date_of_joining
+            ? formatDate(doc.date_of_joining)
             : null,
         };
       } catch (error) {

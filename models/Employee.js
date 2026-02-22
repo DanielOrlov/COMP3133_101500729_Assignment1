@@ -50,6 +50,8 @@ const employeeSchema = new mongoose.Schema(
     },
     employee_photo: {
       type: String,
+      default:
+        "https://res.cloudinary.com/dgdkqquil/image/upload/v1771701127/296fe121-5dfa-43f4-98b5-db50019738a7_p2xynb.jpg",
     },
   },
   {

@@ -14,6 +14,8 @@ import mongoose from "mongoose";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@as-integrations/express5";
 
+import uploadRoutes from "./routes/upload.js";
+
 const app = express();
 dotenv.config();
 
@@ -37,6 +39,7 @@ async function startServer() {
 
   //Apply middleware to the Express app
   app.use("/graphql", cors(), express.json(), expressMiddleware(server));
+  app.use("/api", uploadRoutes);
 
   //Start Express server
   app.listen(process.env.PORT, () => {
