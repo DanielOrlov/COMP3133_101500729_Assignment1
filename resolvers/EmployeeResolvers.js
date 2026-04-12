@@ -74,7 +74,7 @@ const employeeResolvers = {
           salary: args.salary,
           department: args.department,
           employee_photo: args.employee_photo,
-          // date_of_joining will be whatever your Mongoose default is (or undefined)
+          date_of_joining: args.date_of_joining ? args.date_of_joining : Date.now()
         });
 
         const savedEmployee = await newEmployee.save();
@@ -95,32 +95,41 @@ const employeeResolvers = {
       try {
         const { id, ...rest } = args;
 
-        // validate id early
         if (!mongoose.Types.ObjectId.isValid(id)) return null;
 
         const updateFields = {};
+
         Object.keys(rest).forEach((key) => {
           const val = rest[key];
-          if (val !== undefined) updateFields[key] = val;
+          if (val !== undefined) {
+            if (key === "date_of_joining" && val) {
+              updateFields[key] = new Date(val);
+            } else {
+              updateFields[key] = val;
+            }
+          }
         });
 
         if (Object.keys(updateFields).length === 0) {
-          return await employeeModel.findOne({ _id: id }).then((emp) => {
-            if (!emp) return null;
-            const doc = emp._doc ?? emp;
-            return {
-              ...doc,
-              date_of_joining: doc.date_of_joining
-                ? formatDate(doc.date_of_joining)
-                : null,
-            };
-          });
+          const emp = await employeeModel.findById(id);
+          if (!emp) return null;
+
+          const doc = emp._doc ?? emp;
+          return {
+            ...doc,
+            date_of_joining: doc.date_of_joining
+              ? formatDate(doc.date_of_joining)
+              : null,
+          };
         }
 
+
+        console.log("updateEmployee args:", args);
+        console.log("updateFields before DB update:", updateFields);
         const updatedEmployee = await employeeModel.findOneAndUpdate(
           { _id: id },
           { $set: updateFields },
-          { new: true },
+          { new: true, runValidators: true },
         );
 
         if (!updatedEmployee) return null;
@@ -157,11 +166,16 @@ const employeeResolvers = {
   },
 };
 
-const formatDate = (date) =>
-  new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+// const formatDate = (date) =>
+//   new Date(date).toLocaleDateString("en-US", {
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//   });
+
+function formatDate(date) {
+  if (!date) return null;
+  return new Date(date).toISOString().split("T")[0];
+}
 
 export default employeeResolvers;

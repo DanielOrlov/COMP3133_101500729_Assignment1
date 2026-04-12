@@ -32,6 +32,7 @@ const employeeTypeDefs = gql`
       salary: Float!
       department: String!
       employee_photo: String
+      date_of_joining: String!
     ): Employee
 
     updateEmployee(
@@ -44,6 +45,7 @@ const employeeTypeDefs = gql`
       salary: Float
       department: String
       employee_photo: String
+      date_of_joining: String
     ): Employee
 
     deleteEmployee(id: ID!): Employee

@@ -27,7 +27,16 @@ async function startServer() {
 
   await server.start();
 
-  app.use("/graphql", cors(), express.json(), expressMiddleware(server));
+  app.use(
+    cors({
+      origin: "http://localhost:4200",
+      credentials: true,
+    })
+  );
+
+  app.use(express.json());
+
+  app.use("/graphql", expressMiddleware(server));
   app.use("/api", uploadRoutes);
 
   app.get("/", (req, res) => {

@@ -42,7 +42,7 @@ const employeeSchema = new mongoose.Schema(
     date_of_joining: {
       type: Date,
       required: true,
-      default: Date.now,
+      // default: Date.now,
     },
     department: {
       type: String,
