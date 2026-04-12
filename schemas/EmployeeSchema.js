@@ -32,7 +32,7 @@ const employeeTypeDefs = gql`
       salary: Float!
       department: String!
       employee_photo: String
-      date_of_joining: String!
+      date_of_joining: String
     ): Employee
 
     updateEmployee(
