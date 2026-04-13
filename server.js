@@ -31,7 +31,11 @@ async function startServer() {
 
   app.use(
     cors({
-      origin: "http://localhost:4200",
+      origin: [
+        'http://localhost:4200',
+        'https://101500729-comp3133-assignment2.vercel.app',
+      ],
+      // origin: 'http://localhost:4200',
       credentials: true,
     })
   );
