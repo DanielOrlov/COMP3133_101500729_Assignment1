@@ -11,6 +11,8 @@ import employeeResolvers from "./resolvers/EmployeeResolvers.js";
 import uploadRoutes from "./routes/upload.js";
 import { connectDB } from "./config/db.js";
 
+import jwt from "jsonwebtoken";
+
 dotenv.config();
 
 const app = express();
@@ -36,7 +38,28 @@ async function startServer() {
 
   app.use(express.json());
 
-  app.use("/graphql", expressMiddleware(server));
+  app.use(
+    "/graphql",
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const authHeader = req.headers.authorization || "";
+        let user = null;
+
+        if (authHeader.startsWith("Bearer ")) {
+          const token = authHeader.replace("Bearer ", "");
+
+          try {
+            user = jwt.verify(token, process.env.JWT_SECRET);
+          } catch (error) {
+            user = null;
+          }
+        }
+
+        return { user };
+      },
+    }),
+  );
   app.use("/api", uploadRoutes);
 
   app.get("/", (req, res) => {

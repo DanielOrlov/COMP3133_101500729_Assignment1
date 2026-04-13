@@ -2,11 +2,12 @@ import express from "express";
 import multer from "multer";
 import cloudinary from "../config/cloudinary.js";
 import Employee from "../models/Employee.js";
+import { requireAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/employees/:id/photo", upload.single("file"), async (req, res) => {
+router.post("/employees/:id/photo", requireAuth, upload.single("file"), async (req, res) => {
   try {
     const { id } = req.params;
 

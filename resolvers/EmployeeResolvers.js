@@ -63,7 +63,8 @@ const employeeResolvers = {
   },
 
   Mutation: {
-    createEmployee: async (_, args) => {
+    createEmployee: async (_, args, context) => {
+      requireAuth(context);
       try {
         const newEmployee = new employeeModel({
           first_name: args.first_name,
@@ -91,7 +92,8 @@ const employeeResolvers = {
       }
     },
 
-    updateEmployee: async (_, args) => {
+    updateEmployee: async (_, args, context) => {
+      requireAuth(context);
       try {
         const { id, ...rest } = args;
 
@@ -147,7 +149,8 @@ const employeeResolvers = {
       }
     },
 
-    deleteEmployee: async (_, args) => {
+    deleteEmployee: async (_, args, context) => {
+      requireAuth(context);
       try {
         const deletedEmployee = await employeeModel.findByIdAndDelete(args.id);
         if (!deletedEmployee) return null;
@@ -176,6 +179,12 @@ const employeeResolvers = {
 function formatDate(date) {
   if (!date) return null;
   return new Date(date).toISOString().split("T")[0];
+}
+
+function requireAuth(context) {
+  if (!context.user) {
+    throw new Error("Unauthorized");
+  }
 }
 
 export default employeeResolvers;
